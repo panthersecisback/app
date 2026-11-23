@@ -137,17 +137,20 @@ export default function DashboardPage() {
           {/* Clash Indicator */}
           {prices && <ClashIndicator ratio={prices.ratio} />}
           <h1>Live markets</h1>
-         {/* AI Assay link */}
-<Link
+         <Link
   href="/assay"
-  className="mb-6 flex items-center gap-3 rounded-2xl border border-[#D4AF37]/30 bg-gradient-to-r from-[#004225]/40 to-transparent p-4 transition-colors hover:border-[#D4AF37]"
+  className="mb-6 flex items-center gap-3 rounded-2xl border border-[var(--gold)] bg-[var(--card-bg,#141414)] p-4 transition-colors hover:border-[var(--gold-light)]"
 >
-  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4AF37]/15 ring-1 ring-[#D4AF37]/40">
-    <Bot className="h-5 w-5 text-[#D4AF37]" />
+  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--gold)] text-black">
+    <Bot className="h-5 w-5" />
   </div>
   <div>
-    <p className="font-[Playfair_Display] font-semibold text-white">Ask BGM Assay</p>
-    <p className="text-xs text-[#C0C0C0]">Bullion knowledge assistant</p>
+    <p className="font-serif font-semibold text-[var(--text-primary)]">
+      Ask BGM Assay
+    </p>
+    <p className="text-xs text-[var(--text-muted)]">
+      Bullion knowledge assistant
+    </p>
   </div>
 </Link>
 
