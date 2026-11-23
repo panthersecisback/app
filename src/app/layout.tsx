@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
+import { Bot } from "lucide-react";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
@@ -58,6 +60,14 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[var(--bg-dark)] text-[var(--text-primary)]">
         <ServiceWorkerRegister />
         {children}
+
+        <Link
+          href="/assay"
+          aria-label="Ask BGM Assay"
+          className="fixed bottom-6 right-6 z-[100] flex h-14 w-14 items-center justify-center rounded-full bg-[#D4AF37] text-black shadow-lg shadow-black/40 transition-transform hover:scale-105"
+        >
+          <Bot className="h-6 w-6" />
+        </Link>
       </body>
     </html>
   );
