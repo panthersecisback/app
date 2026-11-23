@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Bell, Moon, Sun, ShoppingCart, Menu, X } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { useState } from "react";
-import Link from "next/link";
 import { Coins } from "lucide-react";
 
 // alongside your existing Store link, e.g.:
