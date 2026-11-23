@@ -1,5 +1,7 @@
 
 "use client";
+import Link from "next/link";
+import { Bot } from "lucide-react";
 import CurrentYear from "@/components/CurrentYear";
 import { useEffect, useState, useCallback } from "react";
 import Header from "@/components/Header";
