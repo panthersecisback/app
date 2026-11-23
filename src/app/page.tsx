@@ -115,7 +115,18 @@ export default function DashboardPage() {
                   Set Price Alert
                 </button>
               </div>
-
+<Link
+  href="/assay"
+  className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/30 bg-gradient-to-r from-[#004225]/40 to-transparent p-4 transition-colors hover:border-[#D4AF37]"
+>
+  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4AF37]/15 ring-1 ring-[#D4AF37]/40">
+    <Bot className="h-5 w-5 text-[#D4AF37]" />
+  </div>
+  <div>
+    <p className="font-[Playfair_Display] font-semibold text-white">Ask BGM Assay</p>
+    <p className="text-xs text-[#C0C0C0]">Bullion knowledge assistant</p>
+  </div>
+</Link>
               <div className="order-1 md:order-2 flex justify-center">
                 <div className="relative w-56 h-56 md:w-72 md:h-72 lg:w-80 lg:h-80">
                   <Image
