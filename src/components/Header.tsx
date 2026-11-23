@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Bell, Moon, Sun, ShoppingCart, Menu, X } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { useState } from "react";
-import { Coins } from "lucide-react";
+import { Bot, Coins } from "lucide-react";
 
 
 export default function Header() {
