@@ -136,9 +136,8 @@ export default function DashboardPage() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
           {/* Clash Indicator */}
           {prices && <ClashIndicator ratio={prices.ratio} />}
-          <h2 className="…">Live Markets</h2>
-
-{/* 👇 AI Assay card — between the dashboard heading and the price cards */}
+          <h1>Live markets</h1>
+         {/* AI Assay link */}
 <Link
   href="/assay"
   className="mb-6 flex items-center gap-3 rounded-2xl border border-[#D4AF37]/30 bg-gradient-to-r from-[#004225]/40 to-transparent p-4 transition-colors hover:border-[#D4AF37]"
