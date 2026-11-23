@@ -151,9 +151,6 @@ export default function DashboardPage() {
   </div>
 </Link>
 
-<div className="grid …">
-  <PriceCard … />
-</div>
 
           {/* Price cards */}
           <div className="grid md:grid-cols-2 gap-5">
