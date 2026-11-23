@@ -7,14 +7,6 @@ import { useAppStore } from "@/lib/store";
 import { useState } from "react";
 import { Coins } from "lucide-react";
 
-// alongside your existing Store link, e.g.:
-<Link
-  href="/assay"
-  className="flex items-center gap-1.5 rounded-full border border-[#D4AF37]/30 px-3 py-1.5 text-xs text-[#D4AF37] transition-colors hover:border-[#D4AF37] hover:bg-[#D4AF37]/10"
->
-  <Coins className="h-3.5 w-3.5" />
-  AI Assay
-</Link>
 
 export default function Header() {
   const { theme, toggleTheme, cart, alerts } = useAppStore();
@@ -23,6 +15,13 @@ export default function Header() {
   const activeAlerts = alerts.filter((a) => !a.triggered).length;
 
   return (
+    <Link
+  href="/assay"
+  className="flex items-center gap-1.5 rounded-full border border-[#D4AF37]/30 px-3 py-1.5 text-xs text-[#D4AF37] transition-colors hover:border-[#D4AF37] hover:bg-[#D4AF37]/10"
+>
+  <Bot className="h-3.5 w-3.5" />
+  AI Assay
+</Link>
     <header className="sticky top-0 z-50 glass border-b border-[var(--gold)]/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
