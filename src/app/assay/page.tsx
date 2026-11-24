@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Coins, Send, Sparkles, Bot, ShieldCheck } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 1. BOOT SEQUENCE COMPONENT (Live inside this file)
+// 1. BOOT SEQUENCE (No external file, no hidden state)
 // ─────────────────────────────────────────────────────────────────────────────
 const ASCII_LOGO = [
   "  _       __     __                             ",
@@ -17,36 +17,29 @@ const ASCII_LOGO = [
   "              T O   B G M   A I                 ",
 ];
 
-function BootSequence({ children }: { children: React.ReactNode }) {
-  const [stage, setStage] = useState<"ascii" | "binary" | "done">("ascii");
+function BootSequence({ onDone }: { onDone: () => void }) {
   const [lines, setLines] = useState(0);
+  const [stage, setStage] = useState<"ascii" | "binary">("ascii");
 
   useEffect(() => {
     if (lines < ASCII_LOGO.length) {
-      const timeout = setTimeout(() => {
-        setLines((prev) => prev + 1);
-      }, 120);
-      return () => clearTimeout(timeout);
+      const t = setTimeout(() => setLines((p) => p + 1), 120);
+      return () => clearTimeout(t);
     } else if (stage === "ascii") {
-      const timeout = setTimeout(() => setStage("binary"), 500);
-      return () => clearTimeout(timeout);
-    } else if (stage === "binary") {
-      const timeout = setTimeout(() => setStage("done"), 1600);
-      return () => clearTimeout(timeout);
+      const t = setTimeout(() => setStage("binary"), 400);
+      return () => clearTimeout(t);
+    } else {
+      const t = setTimeout(() => onDone(), 1500);
+      return () => clearTimeout(t);
     }
-  }, [lines, stage]);
-
-  if (stage === "done") return <>{children}</>;
+  }, [lines, stage, onDone]);
 
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0a0a0a] text-[#D4AF37] font-mono overflow-hidden">
-      {/* ASCII Stage */}
       <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${stage === "ascii" ? "opacity-100" : "opacity-0"}`}>
         <div className="text-left whitespace-pre text-xs sm:text-sm md:text-base leading-tight drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]">
           {ASCII_LOGO.slice(0, lines).map((line, i) => (
-            <div key={i} className="animate-in fade-in slide-in-from-left-2 duration-200">
-              {line}
-            </div>
+            <div key={i} className="animate-in fade-in slide-in-from-left-2 duration-200">{line}</div>
           ))}
           {lines < ASCII_LOGO.length && (
             <span className="inline-block w-2 h-4 bg-[#D4AF37] animate-pulse ml-1 align-middle" />
@@ -54,7 +47,6 @@ function BootSequence({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      {/* Binary Rain Stage */}
       {stage === "binary" && (
         <div className="absolute inset-0 flex flex-wrap gap-1 p-4 opacity-30 animate-in fade-in duration-300">
           {Array.from({ length: 400 }).map((_, i) => (
@@ -77,7 +69,7 @@ function BootSequence({ children }: { children: React.ReactNode }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 2. BULLION-ONLY KNOWLEDGE BASE
+// 2. KNOWLEDGE BASE
 // ─────────────────────────────────────────────────────────────────────────────
 type Msg = { id: string; role: "user" | "bot"; text: string };
 
@@ -117,8 +109,8 @@ export default function AssayPage() {
   ]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Force the boot sequence to play when you navigate to this page
-  const [showBoot, setShowBoot] = useState(true);
+  // This is the ONLY state that matters for the boot sequence
+  const [booting, setBooting] = useState(true);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -136,111 +128,106 @@ export default function AssayPage() {
     }, 650);
   }
 
+  // If booting, render ONLY the boot sequence. Once it calls onDone, it swaps to the chat.
+  if (booting) {
+    return <BootSequence onDone={() => setBooting(false)} />;
+  }
+
   return (
-    <>
-      {/* Force the Boot Sequence to render on top */}
-      {showBoot && (
-        <BootSequence>
-          <div /> {/* Dummy child, just so the boot sequence finishes */}
-        </BootSequence>
-      )}
-
-      {/* The actual page */}
-      <div className={`flex min-h-screen flex-col bg-[#0a0a0a] text-white ${showBoot ? "hidden" : "block"}`}>
-        <div className="border-b border-[#D4AF37]/20 bg-gradient-to-r from-[#004225] to-[#0a0a0a]">
-          <div className="mx-auto flex max-w-3xl items-center gap-4 px-4 py-5">
-            <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/30 text-[#D4AF37] transition-colors hover:border-[#D4AF37] hover:bg-[#D4AF37]/10" aria-label="Back to dashboard">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/15 ring-1 ring-[#D4AF37]/40">
-              <Coins className="h-6 w-6 text-[#D4AF37]" />
-            </div>
-            <div className="flex-1">
-              <h1 className="font-[Playfair_Display] text-xl font-bold text-white">BGM Assay</h1>
-              <p className="flex items-center gap-1.5 text-xs text-[#C0C0C0]">
-                <Sparkles className="h-3 w-3 text-[#D4AF37]" /> Bullion knowledge assistant
-              </p>
-            </div>
-            <span className="hidden items-center gap-1 rounded-full border border-[#004225] bg-[#004225]/20 px-3 py-1 text-[11px] text-[#7dd3a0] sm:flex">
-              <ShieldCheck className="h-3 w-3" /> Bullion topics only
-            </span>
+    <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
+      <div className="border-b border-[#D4AF37]/20 bg-gradient-to-r from-[#004225] to-[#0a0a0a]">
+        <div className="mx-auto flex max-w-3xl items-center gap-4 px-4 py-5">
+          <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/30 text-[#D4AF37] transition-colors hover:border-[#D4AF37] hover:bg-[#D4AF37]/10" aria-label="Back to dashboard">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/15 ring-1 ring-[#D4AF37]/40">
+            <Coins className="h-6 w-6 text-[#D4AF37]" />
           </div>
+          <div className="flex-1">
+            <h1 className="font-[Playfair_Display] text-xl font-bold text-white">BGM Assay</h1>
+            <p className="flex items-center gap-1.5 text-xs text-[#C0C0C0]">
+              <Sparkles className="h-3 w-3 text-[#D4AF37]" /> Bullion knowledge assistant
+            </p>
+          </div>
+          <span className="hidden items-center gap-1 rounded-full border border-[#004225] bg-[#004225]/20 px-3 py-1 text-[11px] text-[#7dd3a0] sm:flex">
+            <ShieldCheck className="h-3 w-3" /> Bullion topics only
+          </span>
         </div>
+      </div>
 
-        <div ref={scrollRef} className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 overflow-y-auto px-4 py-6">
-          {msgs.map((m) => (
-            <div key={m.id} className={`flex gap-3 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-              {m.role === "bot" && (
-                <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 ring-1 ring-[#D4AF37]/40">
-                  <Bot className="h-4 w-4 text-[#D4AF37]" />
-                </div>
-              )}
-              <div
-                className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                  m.role === "user"
-                    ? "rounded-br-sm bg-[#004225] text-white"
-                    : "rounded-bl-sm border border-[#D4AF37]/20 bg-[#141414] text-[#E5E5E5]"
-                }`}
-                dangerouslySetInnerHTML={{ __html: m.text.replace(/\*\*(.+?)\*\*/g, "<strong class='text-[#D4AF37]'>$1</strong>") }}
-              />
-            </div>
-          ))}
-          {typing && (
-            <div className="flex gap-3">
+      <div ref={scrollRef} className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 overflow-y-auto px-4 py-6">
+        {msgs.map((m) => (
+          <div key={m.id} className={`flex gap-3 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+            {m.role === "bot" && (
               <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 ring-1 ring-[#D4AF37]/40">
                 <Bot className="h-4 w-4 text-[#D4AF37]" />
               </div>
-              <div className="rounded-2xl rounded-bl-sm border border-[#D4AF37]/20 bg-[#141414] px-4 py-3">
-                <span className="flex gap-1">
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#D4AF37] [animation-delay:-0.3s]" />
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#D4AF37] [animation-delay:-0.15s]" />
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#D4AF37]" />
-                </span>
-              </div>
+            )}
+            <div
+              className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                m.role === "user"
+                  ? "rounded-br-sm bg-[#004225] text-white"
+                  : "rounded-bl-sm border border-[#D4AF37]/20 bg-[#141414] text-[#E5E5E5]"
+              }`}
+              dangerouslySetInnerHTML={{ __html: m.text.replace(/\*\*(.+?)\*\*/g, "<strong class='text-[#D4AF37]'>$1</strong>") }}
+            />
+          </div>
+        ))}
+        {typing && (
+          <div className="flex gap-3">
+            <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 ring-1 ring-[#D4AF37]/40">
+              <Bot className="h-4 w-4 text-[#D4AF37]" />
+            </div>
+            <div className="rounded-2xl rounded-bl-sm border border-[#D4AF37]/20 bg-[#141414] px-4 py-3">
+              <span className="flex gap-1">
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#D4AF37] [animation-delay:-0.3s]" />
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#D4AF37] [animation-delay:-0.15s]" />
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#D4AF37]" />
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="border-t border-[#D4AF37]/20 bg-[#0a0a0a]">
+        <div className="mx-auto w-full max-w-3xl px-4 py-3">
+          {msgs.length <= 1 && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => send(s)}
+                  className="rounded-full border border-[#D4AF37]/30 px-3 py-1.5 text-xs text-[#C0C0C0] transition-colors hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                >
+                  {s}
+                </button>
+              ))}
             </div>
           )}
-        </div>
-
-        <div className="border-t border-[#D4AF37]/20 bg-[#0a0a0a]">
-          <div className="mx-auto w-full max-w-3xl px-4 py-3">
-            {msgs.length <= 1 && (
-              <div className="mb-3 flex flex-wrap gap-2">
-                {SUGGESTIONS.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => send(s)}
-                    className="rounded-full border border-[#D4AF37]/30 px-3 py-1.5 text-xs text-[#C0C0C0] transition-colors hover:border-[#D4AF37] hover:text-[#D4AF37]"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            )}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                send(input);
-              }}
-              className="flex items-center gap-2"
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              send(input);
+            }}
+            className="flex items-center gap-2"
+          >
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about gold or silver bullion…"
+              className="flex-1 rounded-full bg-[#141414] px-4 py-3 text-sm text-white placeholder-[#666] outline-none ring-1 ring-[#D4AF37]/20 focus:ring-[#D4AF37]/60"
+            />
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              aria-label="Send"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D4AF37] text-[#0a0a0a] transition-opacity disabled:opacity-40"
             >
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about gold or silver bullion…"
-                className="flex-1 rounded-full bg-[#141414] px-4 py-3 text-sm text-white placeholder-[#666] outline-none ring-1 ring-[#D4AF37]/20 focus:ring-[#D4AF37]/60"
-              />
-              <button
-                type="submit"
-                disabled={!input.trim()}
-                aria-label="Send"
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D4AF37] text-[#0a0a0a] transition-opacity disabled:opacity-40"
-              >
-                <Send className="h-4 w-4" />
-              </button>
-            </form>
-          </div>
+              <Send className="h-4 w-4" />
+            </button>
+          </form>
         </div>
       </div>
-    </>
+    </div>
   );
 }
