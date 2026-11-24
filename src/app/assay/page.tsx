@@ -1,5 +1,5 @@
 "use client";
-
+import BootSequence from "@/components/BootSequence";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Coins, Send, Sparkles, Bot, ShieldCheck } from "lucide-react";
@@ -145,6 +145,7 @@ export default function AssayPage() {
   }
 
   return (
+     <BootSequence>
     <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
       {/* Page header — matches Store pattern */}
       <div className="border-b border-[#D4AF37]/20 bg-gradient-to-r from-[#004225] to-[#0a0a0a]">
@@ -168,6 +169,7 @@ export default function AssayPage() {
           <span className="hidden items-center gap-1 rounded-full border border-[#004225] bg-[#004225]/20 px-3 py-1 text-[11px] text-[#7dd3a0] sm:flex">
             <ShieldCheck className="h-3 w-3" /> Bullion topics only
           </span>
+           
         </div>
       </div>
 
@@ -249,5 +251,6 @@ export default function AssayPage() {
         </div>
       </div>
     </div>
+     </BootSequence>
   );
 }
